@@ -1,0 +1,22 @@
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git wget xorriso squashfs-tools squashfs-tools-ng mmdebstrap grub-efi mtools console-setup qemu-user-binfmt arch-test apt-utils
+      - name: Build ISO
+        run: |
+          set -e
+          make clean
+          make all MM_EXTRA_OPTIONS=--verbose
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: iso
+          path: "*.iso"
