@@ -1,6 +1,8 @@
 #!/bin/sh -e
 
-mkdir -pv "$1"/{cdrom,rpool,target}
+mkdir -pv "$1"/cdrom
+mkdir -pv "$1"/rpool
+mkdir -pv "$1"/target
 
 cat << 'EOF' > "$1"/etc/initramfs-tools/hooks/pve-init
 #!/bin/sh -e
