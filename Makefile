@@ -67,10 +67,7 @@ build/.disk: release.info build pve-cd-id.txt build/proxmox/packages
 	cp -v release.info build/.cd-info
 	cp -v pve-cd-id.txt build/.pve-cd-id.txt
 	rsync -av $(CURDIR)/files/ $(CURDIR)/build/
-	mkdir -pv build/.base
-	mkdir -pv build/.installer
-	mkdir -pv build/.installer-mp
-	mkdir -pv build/.workdir
+	mkdir -pv build/.base build/.installer build/.installer-mp build/.workdir
 	mkdir -pv build/dists/$(DEBIAN_RELEASE)/pve/binary-loong64
 
 build/boot/linux26: build/pve-installer.squashfs
