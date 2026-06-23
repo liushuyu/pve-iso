@@ -8,6 +8,7 @@ MM_OPTIONS := --arch=loong64 --mode=unshare --keyring=./keyring --dpkgopt='force
 
 PVE_CDID = $(strip $(file < pve-cd-id.txt))
 
+DEBIAN_RELEASE := trixie
 RELEASE := 9.2
 ISORELEASE := 1
 ISO := proxmox-ve_$(RELEASE)-$(ISORELEASE)_loong64.iso
@@ -22,7 +23,8 @@ ISO_PACKAGES := libefiboot1t64 \
 		grub-efi-loong64 \
 		grub-efi-loong64-bin \
 		systemd-boot-tools \
-		systemd-boot-efi
+		systemd-boot-efi \
+		ifupdown2
 
 .DELETE_ON_ERROR:
 
@@ -41,12 +43,13 @@ build/pve-installer.squashfs: PACKAGE_LIST = $(subst $(SPACE),$(COMMA),$(sort $(
 build/pve-installer.squashfs: pve-loong64.sources pve-installer.list /tmp/pve-installer.hook.sh build pve-iso-init
 	mmdebstrap $(MM_OPTIONS) --include='$(PACKAGE_LIST)' --customize-hook='upload pve-iso-init /usr/sbin/pve-iso-init' \
 		--customize=/tmp/pve-installer.hook.sh \
-		trixie $@ "$<"
+		$(DEBIAN_RELEASE) $@ "$<"
 
 build/pve-base.squashfs: PACKAGE_LIST = $(subst $(SPACE),$(COMMA),$(sort $(file < pve-base.list)))
 build/pve-base.squashfs: pve-loong64.sources build pve-base.list
 	mmdebstrap $(MM_OPTIONS) --include='$(PACKAGE_LIST)' --variant=required \
-		trixie $@ "$<"
+		--customize-hook='rm -rf "$$1"/etc/network/interfaces*' \
+		$(DEBIAN_RELEASE) $@ "$<"
 	mkdir -pv build/proxmox
 	unsquashfs -l $@ | wc -l > build/proxmox/pve-base.cnt
 
@@ -61,7 +64,7 @@ build/.disk: release.info build pve-cd-id.txt
 	mkdir -pv build/.installer
 	mkdir -pv build/.installer-mp
 	mkdir -pv build/.workdir
-	mkdir -pv build/dists/trixie/pve/binary-loong64
+	mkdir -pv build/dists/$(DEBIAN_RELEASE)/pve/binary-loong64
 	mkdir -pv build/proxmox/packages
 	cd build/proxmox/packages && apt download $(ISO_PACKAGES); cd ../../../
 
