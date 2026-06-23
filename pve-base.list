@@ -1,1 +1,11 @@
 proxmox-ve
+e2fsprogs
+zfsutils-linux
+btrfs-progs
+xfsprogs
+lvm2
+zfs-zed
+zfs-initramfs
+vim-common
+vim-tiny
+nano
