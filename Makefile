@@ -69,6 +69,7 @@ build/.disk: release.info build pve-cd-id.txt build/proxmox/packages
 	rsync -av $(CURDIR)/files/ $(CURDIR)/build/
 	mkdir -pv build/.base build/.installer build/.installer-mp build/.workdir
 	mkdir -pv build/dists/$(DEBIAN_RELEASE)/pve/binary-loong64
+	sed -i -e's|@RELEASE@|$(RELEASE)|g' -e's|@ISORELEASE@|$(ISORELEASE)|g' $(CURDIR)/build/boot/grub/pvetheme/theme.txt
 
 build/boot/linux26: build/pve-installer.squashfs
 	rm -rf /tmp/pve-iso-tmp && unsquashfs -d /tmp/pve-iso-tmp $< /boot /usr/lib/grub/loongarch64-efi
