@@ -71,7 +71,7 @@ build/.disk: release.info build pve-cd-id.txt build/proxmox/packages
 	mkdir -pv build/dists/$(DEBIAN_RELEASE)/pve/binary-loong64
 
 build/boot/linux26: build/pve-installer.squashfs
-	rm -rf /tmp/pve-iso-tmp && unsquashfs -d /tmp/pve-iso-tmp $< /boot
+	rm -rf /tmp/pve-iso-tmp && unsquashfs -d /tmp/pve-iso-tmp $< /boot /usr/lib/grub/loongarch64-efi
 	cp -v /tmp/pve-iso-tmp/boot/vmlinuz-*-pve build/boot/linux26
 	cp -v /tmp/pve-iso-tmp/boot/initrd.img-*-pve build/boot/initrd.img
 
@@ -85,7 +85,7 @@ build/boot/memtest86+loong64: memtest86+loong64.deb build
 
 $(ISO): build/pve-installer.squashfs build/pve-base.squashfs build/.disk build/boot/linux26 build/boot/memtest86+loong64
 	mkdir -p dist
-	grub-mkrescue -o $@ build/ -- -as mkisofs -V "PVE" -R
+	grub-mkrescue -d /tmp/pve-iso-tmp/usr/lib/grub/loongarch64-efi -o $@ build/ -- -as mkisofs -V "PVE" -R
 
 clean:
 	rm -rf build dist *.iso *.deb /tmp/pve-installer.hook.sh release.info
